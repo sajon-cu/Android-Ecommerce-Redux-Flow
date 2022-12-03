@@ -46,12 +46,14 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
 
         combine(
             viewModel.store.stateFlow.map { it.products },
-            viewModel.store.stateFlow.map { it.favoriteProductIds })
-        { listOfProduct, setOfFavoriteIds ->
+            viewModel.store.stateFlow.map { it.favoriteProductIds },
+            viewModel.store.stateFlow.map { it.expandedProductIds })
+        { listOfProduct, setOfFavoriteIds, setOfExpandedIds ->
             listOfProduct.map {
                 UiProduct(
                     product = it,
-                    isFavorite = setOfFavoriteIds.contains(it.id)
+                    isFavorite = setOfFavoriteIds.contains(it.id),
+                    isExpanded = setOfExpandedIds.contains(it.id)
                 )
             }
         }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiProducts ->

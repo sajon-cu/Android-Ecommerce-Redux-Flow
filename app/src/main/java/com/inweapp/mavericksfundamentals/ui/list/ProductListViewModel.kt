@@ -35,9 +35,9 @@ class ProductListViewModel @Inject constructor(
         }
 
         // Simulate Adding Favorite Product
-        // delay(4000)
-        // store.update {
-        //    return@update it.copy(favoriteProductIds = setOf(1, 3, 4))
-        // }
+//         delay(4000)
+//         store.update {
+//            return@update it.copy(expandedProductIds = setOf(1, 3, 4))
+//         }
     }
 }

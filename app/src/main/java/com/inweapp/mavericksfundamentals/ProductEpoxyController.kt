@@ -6,6 +6,7 @@ import com.airbnb.epoxy.TypedEpoxyController
 import com.inweapp.mavericksfundamentals.model.ui.UiProduct
 import com.inweapp.mavericksfundamentals.ui.list.ProductListViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.exp
 
 /**
  * Created by sajon on 11/18/22
@@ -24,7 +25,8 @@ class ProductEpoxyController(
                 val epoxyId = it + 1
                 UiProductEpoxyModel(
                     uiProduct = null,
-                    onFavoriteIconClicked = ::onFavoriteIconClicked
+                    onFavoriteIconClicked = ::onFavoriteIconClicked,
+                    onUiProductClicked = ::onUiProductClicked
                 ).id(epoxyId).addTo(this)
             }
             return
@@ -33,7 +35,8 @@ class ProductEpoxyController(
         data.forEach { product ->
             UiProductEpoxyModel(
                 uiProduct = product,
-                onFavoriteIconClicked = ::onFavoriteIconClicked
+                onFavoriteIconClicked = ::onFavoriteIconClicked,
+                onUiProductClicked = ::onUiProductClicked
             ).id(product.product.id).addTo(this)
         }
     }
@@ -48,6 +51,20 @@ class ProductEpoxyController(
                     currentFavoriteIds + setOf(selectedProductId)
                 }
                 return@update currentState.copy(favoriteProductIds = currentFavoriteIds)
+            }
+        }
+    }
+
+    private fun onUiProductClicked(productId: Int) {
+        viewModel.viewModelScope.launch {
+            viewModel.store.update { currentState ->
+                var currentExpandedIds = currentState.expandedProductIds
+                currentExpandedIds = if(currentExpandedIds.contains(productId)) {
+                    currentExpandedIds.filter { it != productId }.toSet()
+                } else {
+                    currentExpandedIds + setOf(productId)
+                }
+                return@update currentState.copy(expandedProductIds = currentExpandedIds)
             }
         }
     }

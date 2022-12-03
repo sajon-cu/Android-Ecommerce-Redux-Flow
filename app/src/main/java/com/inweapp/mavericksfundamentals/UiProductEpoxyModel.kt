@@ -16,7 +16,8 @@ import com.inweapp.mavericksfundamentals.model.ui.UiProduct
  */
 data class UiProductEpoxyModel(
     val uiProduct: UiProduct?,
-    val onFavoriteIconClicked: (Int) -> Unit
+    val onFavoriteIconClicked: (Int) -> Unit,
+    val onUiProductClicked: (Int) -> Unit,
 ): ViewBindingKotlinModel<EpoxyModelProductItemBinding>(R.layout.epoxy_model_product_item) {
     @SuppressLint("SetTextI18n")
     override fun EpoxyModelProductItemBinding.bind() {
@@ -29,6 +30,8 @@ data class UiProductEpoxyModel(
             productDescriptionTextView.text = uiProduct.product.description
             productCategoryTextView.text = uiProduct.product.category
             productPriceTextView.text = uiProduct.product.price.toString()
+            productDescriptionTextView.text = uiProduct.product.description
+            productDescriptionTextView.isVisible = uiProduct.isExpanded
 
             val imageRes = if(uiProduct.isFavorite) {
                 R.drawable.ic_baseline_favorite_24
@@ -37,7 +40,9 @@ data class UiProductEpoxyModel(
             }
 
             favoriteImageView.setIconResource(imageRes)
-            favoriteImageView.setOnClickListener {
+            cardView.setOnClickListener { onUiProductClicked(uiProduct.product.id) }
+
+            root.setOnClickListener {
                 onFavoriteIconClicked(uiProduct.product.id)
             }
 

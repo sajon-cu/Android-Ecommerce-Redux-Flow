@@ -8,4 +8,8 @@ import com.inweapp.mavericksfundamentals.model.domain.Product
  * sajon@syftet.com
  * Last modified $file.lastModified
  */
-data class UiProduct(val product: Product, val isFavorite: Boolean = false)
+data class UiProduct(
+    val product: Product,
+    val isFavorite: Boolean = false,
+    val isExpanded: Boolean = false
+)
