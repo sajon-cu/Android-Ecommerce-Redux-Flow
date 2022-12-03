@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Mavericks Fundamentals</string>
+    <string name="menu_label_product_list">List</string>
+    <string name="menu_label_profile">Profile</string>
 </resources>

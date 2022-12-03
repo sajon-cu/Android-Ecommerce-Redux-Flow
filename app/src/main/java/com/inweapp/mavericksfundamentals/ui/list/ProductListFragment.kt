@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
  * sajon@syftet.com
  * Last modified $file.lastModified
  */
+private const val TAG = "ProductListFragment"
 @AndroidEntryPoint
 class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
     private val viewModel: ProductListViewModel by viewModels()
@@ -39,6 +40,9 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
         val productEpoxyController = ProductEpoxyController(viewModel)
         views.productRecyclerView.setController(productEpoxyController)
         productEpoxyController.setData(emptyList())
+
+        Log.d(TAG, "onViewCreated: $productEpoxyController")
+        Log.d(TAG, "viewModel: $viewModel")
 
         combine(
             viewModel.store.stateFlow.map { it.products },

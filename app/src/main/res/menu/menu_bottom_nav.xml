@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@id/bottomNavView">
+    <item
+        android:id="@+id/productListFragment"
+        android:icon="@drawable/ic_list_24"
+        android:title="@string/menu_label_product_list" />
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_person_24"
+        android:title="@string/menu_label_profile" />
+</menu>

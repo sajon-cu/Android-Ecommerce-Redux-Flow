@@ -11,7 +11,7 @@ import com.airbnb.mvrx.MavericksView
  * sajon@syftet.com
  * Last modified $file.lastModified
  */
-abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity(), MavericksView {
+abstract class StoreBaseActivity<VB: ViewBinding>: AppCompatActivity(), MavericksView {
     protected lateinit var views: VB
 
     override fun invalidate() {}
