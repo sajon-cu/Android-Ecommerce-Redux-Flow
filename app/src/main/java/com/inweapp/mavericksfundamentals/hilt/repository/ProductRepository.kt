@@ -17,19 +17,9 @@ class ProductRepository @Inject constructor(
     private val productsService: ProductsService,
     private val productMapper: ProductMapper
 ) {
-    suspend fun fetchAllProducts(): List<Product>? = withContext(Dispatchers.IO) {
-        return@withContext try {
-            val response = productsService.getAllProducts()
-            if(response.isSuccessful) response.body()?.let { networkProducts ->
-                networkProducts.map { networkProduct ->
-                    productMapper.buildFrom(networkProduct)
-                }
-            } else {
-                emptyList()
-            }
-        } catch (ex: Exception) {
-            println(ex)
-            emptyList()
-        }
+    suspend fun fetchAllProducts(): List<Product> = withContext(Dispatchers.IO) {
+        productsService.getAllProducts().body()?.let { networkProducts ->
+            networkProducts.map { productMapper.buildFrom(it) }
+        } ?: emptyList()
     }
 }

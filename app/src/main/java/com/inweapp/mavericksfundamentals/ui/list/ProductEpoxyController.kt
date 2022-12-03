@@ -1,12 +1,10 @@
-package com.inweapp.mavericksfundamentals
+package com.inweapp.mavericksfundamentals.ui.list
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.airbnb.epoxy.CarouselModel_
 import com.airbnb.epoxy.TypedEpoxyController
-import com.inweapp.mavericksfundamentals.model.ui.UiProduct
-import com.inweapp.mavericksfundamentals.ui.list.ProductListViewModel
+import com.inweapp.mavericksfundamentals.model.domain.Filter
 import kotlinx.coroutines.launch
-import kotlin.math.exp
 
 /**
  * Created by sajon on 11/18/22
@@ -18,9 +16,9 @@ private const val TAG = "ProductEpoxyController"
 
 class ProductEpoxyController(
     private val viewModel: ProductListViewModel
-) : TypedEpoxyController<List<UiProduct>>() {
-    override fun buildModels(data: List<UiProduct>?) {
-        if (data.isNullOrEmpty()) {
+) : TypedEpoxyController<ProductListFragmentUiState>() {
+    override fun buildModels(data: ProductListFragmentUiState?) {
+        if (data == null) {
             repeat(7) {
                 val epoxyId = it + 1
                 UiProductEpoxyModel(
@@ -32,7 +30,16 @@ class ProductEpoxyController(
             return
         }
 
-        data.forEach { product ->
+        // TODO ADD FILTERS FORM UI STATE
+        val uiFilteredModels = data.filters.map { uiFilter ->
+            UiFilterProductEpoxyModel(
+                uiFilter = uiFilter,
+                onFilterSelected = ::onFilterSelected
+            ).id(uiFilter.filter.value)
+        }
+        CarouselModel_().models(uiFilteredModels).id("filter").addTo(this)
+
+        data.products.forEach { product ->
             UiProductEpoxyModel(
                 uiProduct = product,
                 onFavoriteIconClicked = ::onFavoriteIconClicked,
@@ -65,6 +72,16 @@ class ProductEpoxyController(
                     currentExpandedIds + setOf(productId)
                 }
                 return@update currentState.copy(expandedProductIds = currentExpandedIds)
+            }
+        }
+    }
+
+    private fun onFilterSelected(filter: Filter) {
+        viewModel.viewModelScope.launch {
+            viewModel.store.update { currentState ->
+                return@update currentState.copy(
+                    productFilterInfo = currentState.productFilterInfo.copy(selectedFilter = filter)
+                )
             }
         }
     }

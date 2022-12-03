@@ -1,4 +1,4 @@
-package com.inweapp.mavericksfundamentals.ui
+package com.inweapp.mavericksfundamentals.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater

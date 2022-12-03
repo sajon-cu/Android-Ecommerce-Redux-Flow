@@ -1,16 +1,14 @@
 package com.inweapp.mavericksfundamentals.ui.list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
-import com.inweapp.mavericksfundamentals.ProductEpoxyController
 import com.inweapp.mavericksfundamentals.core.StoreBaseFragment
 import com.inweapp.mavericksfundamentals.databinding.FragmentProductListBinding
+import com.inweapp.mavericksfundamentals.model.ui.UiFilter
 import com.inweapp.mavericksfundamentals.model.ui.UiProduct
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
@@ -24,6 +22,7 @@ import kotlinx.coroutines.flow.map
  * Last modified $file.lastModified
  */
 private const val TAG = "ProductListFragment"
+
 @AndroidEntryPoint
 class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
     private val viewModel: ProductListViewModel by viewModels()
@@ -39,37 +38,52 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
 
         val productEpoxyController = ProductEpoxyController(viewModel)
         views.productRecyclerView.setController(productEpoxyController)
-        productEpoxyController.setData(emptyList())
-
-        Log.d(TAG, "onViewCreated: $productEpoxyController")
-        Log.d(TAG, "viewModel: $viewModel")
+        // productEpoxyController.setData(emptyList())
 
         combine(
             viewModel.store.stateFlow.map { it.products },
             viewModel.store.stateFlow.map { it.favoriteProductIds },
-            viewModel.store.stateFlow.map { it.expandedProductIds })
-        { listOfProduct, setOfFavoriteIds, setOfExpandedIds ->
-            listOfProduct.map {
+            viewModel.store.stateFlow.map { it.expandedProductIds },
+            viewModel.store.stateFlow.map { it.productFilterInfo })
+        { listOfProduct, setOfFavoriteIds, setOfExpandedIds, productFilterInfo ->
+            val uiProducts = listOfProduct.map {
                 UiProduct(
                     product = it,
                     isFavorite = setOfFavoriteIds.contains(it.id),
                     isExpanded = setOfExpandedIds.contains(it.id)
                 )
             }
+
+            val uiFilters = productFilterInfo.filters.map { filter ->
+                UiFilter(
+                    filter,
+                    isSelected = productFilterInfo.selectedFilter?.equals(filter) == true
+                )
+            }.toSet()
+
+            val filteredProducts = if (productFilterInfo.selectedFilter == null) {
+                uiProducts
+            } else {
+                uiProducts.filter {
+                    it.product.category == productFilterInfo.selectedFilter.value
+                }
+            }
+
+            return@combine ProductListFragmentUiState(uiFilters, filteredProducts)
+        }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiState ->
+            productEpoxyController.setData(uiState)
+        }
+
+        /*viewModel.store.stateFlow.map {
+            it.products
         }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiProducts ->
             productEpoxyController.setData(uiProducts)
         }
 
-//        viewModel.store.stateFlow.map {
-//            it.products
-//        }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiProducts ->
-//            productEpoxyController.setData(uiProducts)
-//        }
-
         viewModel.loadingState.asLiveData().observe(viewLifecycleOwner) {
             views.progressBar.isVisible = it
-        }
+        }*/
 
-        viewModel.refreshProducts()
+        // viewModel.refreshProducts()
     }
 }

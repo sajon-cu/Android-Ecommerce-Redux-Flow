@@ -1,6 +1,5 @@
-package com.inweapp.mavericksfundamentals
+package com.inweapp.mavericksfundamentals.ui.counter
 
-import androidx.lifecycle.ViewModel
 import com.airbnb.mvrx.MavericksState
 import com.airbnb.mvrx.MavericksViewModel
 

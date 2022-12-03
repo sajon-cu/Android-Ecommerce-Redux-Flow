@@ -1,9 +1,10 @@
-package com.inweapp.mavericksfundamentals
+package com.inweapp.mavericksfundamentals.ui.list
 
 import android.annotation.SuppressLint
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import coil.load
+import com.inweapp.mavericksfundamentals.R
 import com.inweapp.mavericksfundamentals.databinding.EpoxyModelProductItemBinding
 import com.inweapp.mavericksfundamentals.epoxy.ViewBindingKotlinModel
 import com.inweapp.mavericksfundamentals.model.ui.UiProduct
@@ -40,10 +41,10 @@ data class UiProductEpoxyModel(
             }
 
             favoriteImageView.setIconResource(imageRes)
-            cardView.setOnClickListener { onUiProductClicked(uiProduct.product.id) }
+            favoriteImageView.setOnClickListener { onFavoriteIconClicked(uiProduct.product.id) }
 
             root.setOnClickListener {
-                onFavoriteIconClicked(uiProduct.product.id)
+                onUiProductClicked(uiProduct.product.id)
             }
 
             productImageViewLoadingProgressBar.isVisible = true

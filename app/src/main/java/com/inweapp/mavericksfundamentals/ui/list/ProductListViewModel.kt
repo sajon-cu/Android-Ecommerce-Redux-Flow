@@ -3,6 +3,7 @@ package com.inweapp.mavericksfundamentals.ui.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.inweapp.mavericksfundamentals.hilt.repository.ProductRepository
+import com.inweapp.mavericksfundamentals.model.domain.Filter
 import com.inweapp.mavericksfundamentals.model.domain.Product
 import com.inweapp.mavericksfundamentals.redux.ApplicationState
 import com.inweapp.mavericksfundamentals.redux.Store
@@ -27,11 +28,23 @@ class ProductListViewModel @Inject constructor(
     private val _loadingState = MutableStateFlow<Boolean>(false)
     val loadingState: StateFlow<Boolean> = _loadingState
 
-    fun refreshProducts() = viewModelScope.launch {
-        val products: List<Product>? = productRepository.fetchAllProducts()
+    init {
+        refreshProducts()
+    }
+
+    private fun refreshProducts() = viewModelScope.launch {
+        val products: List<Product> = productRepository.fetchAllProducts()
 
         store.update { applicationState ->
-            return@update applicationState.copy(products = products?: emptyList())
+            return@update applicationState.copy(
+                products = products,
+                productFilterInfo = ApplicationState.ProductFilterInfo(
+                    filters = products.map {
+                        Filter(value = it.category, displayText = it.category)
+                    }.toSet(),
+                    selectedFilter = null
+                )
+            )
         }
 
         // Simulate Adding Favorite Product

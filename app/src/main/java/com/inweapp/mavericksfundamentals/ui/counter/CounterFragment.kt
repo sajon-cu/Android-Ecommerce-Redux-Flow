@@ -1,4 +1,4 @@
-package com.inweapp.mavericksfundamentals
+package com.inweapp.mavericksfundamentals.ui.counter
 
 import android.os.Bundle
 import android.util.Log
@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.airbnb.mvrx.MavericksView
 import com.airbnb.mvrx.activityViewModel
-import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import com.inweapp.mavericksfundamentals.R
 
 /**
  * Created by sajon on 11/17/22
