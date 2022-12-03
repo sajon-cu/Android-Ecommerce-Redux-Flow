@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import coil.load
 import com.inweapp.mavericksfundamentals.databinding.EpoxyModelProductItemBinding
 import com.inweapp.mavericksfundamentals.epoxy.ViewBindingKotlinModel
-import com.inweapp.mavericksfundamentals.model.domain.Product
 import com.inweapp.mavericksfundamentals.model.ui.UiProduct
 
 /**
@@ -15,29 +14,35 @@ import com.inweapp.mavericksfundamentals.model.ui.UiProduct
  * sajon@syftet.com
  * Last modified $file.lastModified
  */
-data class ProductEpoxyModel(val product: UiProduct?): ViewBindingKotlinModel<EpoxyModelProductItemBinding>(R.layout.epoxy_model_product_item) {
+data class UiProductEpoxyModel(
+    val uiProduct: UiProduct?,
+    val onFavoriteIconClicked: (Int) -> Unit
+): ViewBindingKotlinModel<EpoxyModelProductItemBinding>(R.layout.epoxy_model_product_item) {
     @SuppressLint("SetTextI18n")
     override fun EpoxyModelProductItemBinding.bind() {
-        shimmerLayout.isVisible = product == null
-        cardView.isInvisible = product == null
+        shimmerLayout.isVisible = uiProduct == null
+        cardView.isInvisible = uiProduct == null
 
-        product?.let {
+        uiProduct?.let {
             shimmerLayout.stopShimmer()
-            productTitleTextView.text = product.product.title
-            productDescriptionTextView.text = product.product.description
-            productCategoryTextView.text = product.product.category
-            productPriceTextView.text = product.product.price.toString()
+            productTitleTextView.text = uiProduct.product.title
+            productDescriptionTextView.text = uiProduct.product.description
+            productCategoryTextView.text = uiProduct.product.category
+            productPriceTextView.text = uiProduct.product.price.toString()
 
-            val imageRes = if(product.isFavorite) {
+            val imageRes = if(uiProduct.isFavorite) {
                 R.drawable.ic_baseline_favorite_24
             } else {
                 R.drawable.ic_round_favorite_border_24
             }
 
             favoriteImageView.setIconResource(imageRes)
+            favoriteImageView.setOnClickListener {
+                onFavoriteIconClicked(uiProduct.product.id)
+            }
 
             productImageViewLoadingProgressBar.isVisible = true
-            productImageView.load(data = product.product.image) {
+            productImageView.load(data = uiProduct.product.image) {
                 listener { _, _ ->
                     productImageViewLoadingProgressBar.isVisible = false
                 }

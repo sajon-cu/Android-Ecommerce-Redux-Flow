@@ -36,7 +36,7 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val productEpoxyController = ProductEpoxyController()
+        val productEpoxyController = ProductEpoxyController(viewModel)
         views.productRecyclerView.setController(productEpoxyController)
         productEpoxyController.setData(emptyList())
 
@@ -45,7 +45,10 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
             viewModel.store.stateFlow.map { it.favoriteProductIds })
         { listOfProduct, setOfFavoriteIds ->
             listOfProduct.map {
-                UiProduct(it, setOfFavoriteIds.contains(it.id))
+                UiProduct(
+                    product = it,
+                    isFavorite = setOfFavoriteIds.contains(it.id)
+                )
             }
         }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiProducts ->
             productEpoxyController.setData(uiProducts)

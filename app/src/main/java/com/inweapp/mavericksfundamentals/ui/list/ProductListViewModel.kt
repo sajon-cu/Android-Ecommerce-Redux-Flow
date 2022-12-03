@@ -28,19 +28,16 @@ class ProductListViewModel @Inject constructor(
     val loadingState: StateFlow<Boolean> = _loadingState
 
     fun refreshProducts() = viewModelScope.launch {
-        _loadingState.value = true
-
         val products: List<Product>? = productRepository.fetchAllProducts()
 
         store.update { applicationState ->
             return@update applicationState.copy(products = products?: emptyList())
         }
 
-        _loadingState.value = false
-
-        delay(4000)
-        store.update {
-            return@update it.copy(favoriteProductIds = setOf(1, 3, 4))
-        }
+        // Simulate Adding Favorite Product
+        // delay(4000)
+        // store.update {
+        //    return@update it.copy(favoriteProductIds = setOf(1, 3, 4))
+        // }
     }
 }
