@@ -38,7 +38,6 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
 
         val productEpoxyController = ProductEpoxyController(viewModel)
         views.productRecyclerView.setController(productEpoxyController)
-        // productEpoxyController.setData(emptyList())
 
         combine(
             viewModel.store.stateFlow.map { it.products },
@@ -46,6 +45,10 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
             viewModel.store.stateFlow.map { it.expandedProductIds },
             viewModel.store.stateFlow.map { it.productFilterInfo })
         { listOfProduct, setOfFavoriteIds, setOfExpandedIds, productFilterInfo ->
+            if(listOfProduct.isEmpty()) {
+                return@combine ProductListFragmentUiState.Loading
+            }
+
             val uiProducts = listOfProduct.map {
                 UiProduct(
                     product = it,
@@ -69,7 +72,7 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
                 }
             }
 
-            return@combine ProductListFragmentUiState(uiFilters, filteredProducts)
+            return@combine ProductListFragmentUiState.Success(uiFilters, filteredProducts)
         }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiState ->
             productEpoxyController.setData(uiState)
         }

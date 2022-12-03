@@ -1,6 +1,7 @@
 package com.inweapp.mavericksfundamentals.ui.list
 
 import com.inweapp.mavericksfundamentals.model.domain.Filter
+import com.inweapp.mavericksfundamentals.model.domain.Product
 import com.inweapp.mavericksfundamentals.model.ui.UiFilter
 import com.inweapp.mavericksfundamentals.model.ui.UiProduct
 
@@ -10,7 +11,11 @@ import com.inweapp.mavericksfundamentals.model.ui.UiProduct
  * sajon@syftet.com
  * Last modified $file.lastModified
  */
-data class ProductListFragmentUiState(
-    val filters: Set<UiFilter>,
-    val products: List<UiProduct>
-)
+sealed interface ProductListFragmentUiState {
+    data class Success(
+        val filters: Set<UiFilter>,
+        val products: List<UiProduct>
+    ) : ProductListFragmentUiState
+
+    object Loading : ProductListFragmentUiState
+}

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardView"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    app:cardCornerRadius="@dimen/corner_radius"
     app:cardBackgroundColor="@color/purple_200"
+    app:cardCornerRadius="@dimen/corner_radius"
+    app:cardElevation="0dp"
     app:strokeColor="@color/purple_500"
     app:strokeWidth="1dp">
 
@@ -16,9 +16,9 @@
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="4dp"
-        android:text="Filtered Category"
+        android:paddingVertical="8dp"
         android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="jewelry" />
 
 </com.google.android.material.card.MaterialCardView>

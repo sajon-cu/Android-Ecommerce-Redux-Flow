@@ -29,6 +29,6 @@ data class UiFilterProductEpoxyModel(
             R.color.purple_200
         }
 
-        cardView.setCardBackgroundColor(ContextCompat.getColor(root.context, cardBackgroundColorResId))
+        root.setCardBackgroundColor(ContextCompat.getColor(root.context, cardBackgroundColorResId))
     }
 }

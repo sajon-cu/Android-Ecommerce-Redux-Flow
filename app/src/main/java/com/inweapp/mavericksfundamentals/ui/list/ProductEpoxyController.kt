@@ -1,10 +1,13 @@
 package com.inweapp.mavericksfundamentals.ui.list
 
 import androidx.lifecycle.viewModelScope
+import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.CarouselModel_
 import com.airbnb.epoxy.TypedEpoxyController
+import com.inweapp.mavericksfundamentals.extensions.toPx
 import com.inweapp.mavericksfundamentals.model.domain.Filter
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /**
  * Created by sajon on 11/18/22
@@ -18,33 +21,40 @@ class ProductEpoxyController(
     private val viewModel: ProductListViewModel
 ) : TypedEpoxyController<ProductListFragmentUiState>() {
     override fun buildModels(data: ProductListFragmentUiState?) {
-        if (data == null) {
-            repeat(7) {
-                val epoxyId = it + 1
-                UiProductEpoxyModel(
-                    uiProduct = null,
-                    onFavoriteIconClicked = ::onFavoriteIconClicked,
-                    onUiProductClicked = ::onUiProductClicked
-                ).id(epoxyId).addTo(this)
+        when(data) {
+            is ProductListFragmentUiState.Success -> {
+                val uiFilteredModels = data.filters.map { uiFilter ->
+                    UiFilterProductEpoxyModel(
+                        uiFilter = uiFilter,
+                        onFilterSelected = ::onFilterSelected
+                    ).id(uiFilter.filter.value)
+                }
+                CarouselModel_()
+                    .models(uiFilteredModels)
+                    .padding(Carousel.Padding(16.toPx(), 8.toPx()))
+                    .id("filter")
+                    .addTo(this)
+
+                data.products.forEach { product ->
+                    UiProductEpoxyModel(
+                        uiProduct = product,
+                        onFavoriteIconClicked = ::onFavoriteIconClicked,
+                        onUiProductClicked = ::onUiProductClicked
+                    ).id(product.product.id).addTo(this)
+                }
             }
-            return
-        }
 
-        // TODO ADD FILTERS FORM UI STATE
-        val uiFilteredModels = data.filters.map { uiFilter ->
-            UiFilterProductEpoxyModel(
-                uiFilter = uiFilter,
-                onFilterSelected = ::onFilterSelected
-            ).id(uiFilter.filter.value)
-        }
-        CarouselModel_().models(uiFilteredModels).id("filter").addTo(this)
-
-        data.products.forEach { product ->
-            UiProductEpoxyModel(
-                uiProduct = product,
-                onFavoriteIconClicked = ::onFavoriteIconClicked,
-                onUiProductClicked = ::onUiProductClicked
-            ).id(product.product.id).addTo(this)
+            is ProductListFragmentUiState.Loading -> {
+                repeat(7) {
+                    val epoxyId = UUID.randomUUID().toString()
+                    UiProductEpoxyModel(
+                        uiProduct = null,
+                        onFavoriteIconClicked = ::onFavoriteIconClicked,
+                        onUiProductClicked = ::onUiProductClicked
+                    ).id(epoxyId).addTo(this)
+                }
+            }
+            else -> throw RuntimeException("Unhandled Branch $data")
         }
     }
 
@@ -79,8 +89,16 @@ class ProductEpoxyController(
     private fun onFilterSelected(filter: Filter) {
         viewModel.viewModelScope.launch {
             viewModel.store.update { currentState ->
+                val currentSelectedFilter = currentState.productFilterInfo.selectedFilter
+
                 return@update currentState.copy(
-                    productFilterInfo = currentState.productFilterInfo.copy(selectedFilter = filter)
+                    productFilterInfo = currentState.productFilterInfo.copy(
+                        selectedFilter = if(filter != currentSelectedFilter) {
+                            filter
+                        } else {
+                            null
+                        }
+                    )
                 )
             }
         }

@@ -8,7 +8,6 @@ import com.inweapp.mavericksfundamentals.model.domain.Product
 import com.inweapp.mavericksfundamentals.redux.ApplicationState
 import com.inweapp.mavericksfundamentals.redux.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     val store: Store<ApplicationState>,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val filterGenerator: FilterGenerator
 ) : ViewModel() {
     private val _loadingState = MutableStateFlow<Boolean>(false)
     val loadingState: StateFlow<Boolean> = _loadingState
@@ -34,14 +34,13 @@ class ProductListViewModel @Inject constructor(
 
     private fun refreshProducts() = viewModelScope.launch {
         val products: List<Product> = productRepository.fetchAllProducts()
+        val filters: Set<Filter> = filterGenerator.generate(products)
 
         store.update { applicationState ->
             return@update applicationState.copy(
                 products = products,
                 productFilterInfo = ApplicationState.ProductFilterInfo(
-                    filters = products.map {
-                        Filter(value = it.category, displayText = it.category)
-                    }.toSet(),
+                    filters = filters,
                     selectedFilter = null
                 )
             )
