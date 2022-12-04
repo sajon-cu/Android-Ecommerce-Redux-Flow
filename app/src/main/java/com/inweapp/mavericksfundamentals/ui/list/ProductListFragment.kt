@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * Created by sajon on 11/17/22
@@ -33,6 +34,9 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
 
     private val viewModel: ProductListViewModel by viewModels()
 
+    @Inject
+    lateinit var uiStateGenerator: ProductListFragmentUiStateGenerator
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,26 +48,7 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
             viewModel.uiProductListReducer.reduce(viewModel.store),
             viewModel.store.stateFlow.map { it.productFilterInfo }
         ) { uiProducts, productFilterInfo ->
-            if(uiProducts.isEmpty()) {
-                return@combine ProductListFragmentUiState.Loading
-            }
-
-            val uiFilters = productFilterInfo.filters.map { filter ->
-                UiFilter(
-                    filter,
-                    isSelected = productFilterInfo.selectedFilter?.equals(filter) == true
-                )
-            }.toSet()
-
-            val filteredProducts = if (productFilterInfo.selectedFilter == null) {
-                uiProducts
-            } else {
-                uiProducts.filter {
-                    it.product.category == productFilterInfo.selectedFilter.value
-                }
-            }
-
-            return@combine ProductListFragmentUiState.Success(uiFilters, filteredProducts)
+            return@combine uiStateGenerator.generate(uiProducts, productFilterInfo)
         }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner) { uiState ->
             productEpoxyController.setData(uiState)
         }

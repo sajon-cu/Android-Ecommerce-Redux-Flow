@@ -8,6 +8,8 @@ import com.inweapp.mavericksfundamentals.model.domain.Product
 import com.inweapp.mavericksfundamentals.redux.ApplicationState
 import com.inweapp.mavericksfundamentals.redux.Store
 import com.inweapp.mavericksfundamentals.redux.reducer.UiProductListReducer
+import com.inweapp.mavericksfundamentals.redux.updater.UiProductFavoriteUpdater
+import com.inweapp.mavericksfundamentals.redux.updater.UiProductInCartUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +27,9 @@ class ProductListViewModel @Inject constructor(
     val store: Store<ApplicationState>,
     private val productRepository: ProductRepository,
     private val filterGenerator: FilterGenerator,
-    val uiProductListReducer: UiProductListReducer
+    val uiProductListReducer: UiProductListReducer,
+    val uiProductFavoriteUpdater: UiProductFavoriteUpdater,
+    val uiProductInCartUpdater: UiProductInCartUpdater
 ) : ViewModel() {
     private val _loadingState = MutableStateFlow<Boolean>(false)
     val loadingState: StateFlow<Boolean> = _loadingState
