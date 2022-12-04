@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "170300579127",
+    "project_id": "android-e-commerce-redux",
+    "storage_bucket": "android-e-commerce-redux.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170300579127:android:9b9122c37560de1c82ceb2",
+        "android_client_info": {
+          "package_name": "com.inweapp.mavericksfundamentals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "170300579127-lti06osd84ui75g80qlk0ai4vh60puhm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJujcNlUomJoII4ySm3W5pIIketdHC6uw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170300579127-lti06osd84ui75g80qlk0ai4vh60puhm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_product_list" />
 
     <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.inweapp.mavericksfundamentals.ui.cart.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart" />
+
+    <fragment
         android:id="@+id/profileFragment"
         android:name="com.inweapp.mavericksfundamentals.ui.profile.ProfileFragment"
         android:label="Profile"

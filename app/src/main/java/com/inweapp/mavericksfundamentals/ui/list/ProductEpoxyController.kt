@@ -39,7 +39,8 @@ class ProductEpoxyController(
                     UiProductEpoxyModel(
                         uiProduct = product,
                         onFavoriteIconClicked = ::onFavoriteIconClicked,
-                        onUiProductClicked = ::onUiProductClicked
+                        onUiProductClicked = ::onUiProductClicked,
+                        onAddToCartClicked = ::onAddToCartClicked,
                     ).id(product.product.id).addTo(this)
                 }
             }
@@ -50,7 +51,8 @@ class ProductEpoxyController(
                     UiProductEpoxyModel(
                         uiProduct = null,
                         onFavoriteIconClicked = ::onFavoriteIconClicked,
-                        onUiProductClicked = ::onUiProductClicked
+                        onUiProductClicked = ::onUiProductClicked,
+                        onAddToCartClicked = ::onAddToCartClicked,
                     ).id(epoxyId).addTo(this)
                 }
             }
@@ -68,6 +70,20 @@ class ProductEpoxyController(
                     currentFavoriteIds + setOf(selectedProductId)
                 }
                 return@update currentState.copy(favoriteProductIds = currentFavoriteIds)
+            }
+        }
+    }
+
+    private fun onAddToCartClicked(productId: Int) {
+        viewModel.viewModelScope.launch {
+            viewModel.store.update { currentState ->
+                var currentInCartProductIds = currentState.inCartProductIds
+                currentInCartProductIds = if(currentInCartProductIds.contains(productId)) {
+                    currentInCartProductIds.filter { it != productId }.toSet()
+                } else {
+                    currentInCartProductIds + setOf(productId)
+                }
+                return@update currentState.copy(inCartProductIds = currentInCartProductIds)
             }
         }
     }

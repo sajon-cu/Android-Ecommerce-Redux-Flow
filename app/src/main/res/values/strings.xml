@@ -2,4 +2,6 @@
     <string name="app_name">Mavericks Fundamentals</string>
     <string name="menu_label_product_list">List</string>
     <string name="menu_label_profile">Profile</string>
+    <string name="menu_label_cart">Cart</string>
+    <string name="your_cart_is_empty">Your cart is empty</string>
 </resources>

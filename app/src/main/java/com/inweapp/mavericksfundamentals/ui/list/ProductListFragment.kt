@@ -9,7 +9,6 @@ import androidx.lifecycle.asLiveData
 import com.inweapp.mavericksfundamentals.core.StoreBaseFragment
 import com.inweapp.mavericksfundamentals.databinding.FragmentProductListBinding
 import com.inweapp.mavericksfundamentals.model.ui.UiFilter
-import com.inweapp.mavericksfundamentals.model.ui.UiProduct
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -25,13 +24,15 @@ private const val TAG = "ProductListFragment"
 
 @AndroidEntryPoint
 class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
-    private val viewModel: ProductListViewModel by viewModels()
     override fun getBinding(
         layoutInflater: LayoutInflater,
         viewGroup: ViewGroup?
     ): FragmentProductListBinding {
         return FragmentProductListBinding.inflate(layoutInflater, viewGroup, false)
     }
+
+    private val viewModel: ProductListViewModel by viewModels()
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,21 +41,11 @@ class ProductListFragment : StoreBaseFragment<FragmentProductListBinding>() {
         views.productRecyclerView.setController(productEpoxyController)
 
         combine(
-            viewModel.store.stateFlow.map { it.products },
-            viewModel.store.stateFlow.map { it.favoriteProductIds },
-            viewModel.store.stateFlow.map { it.expandedProductIds },
-            viewModel.store.stateFlow.map { it.productFilterInfo })
-        { listOfProduct, setOfFavoriteIds, setOfExpandedIds, productFilterInfo ->
-            if(listOfProduct.isEmpty()) {
+            viewModel.uiProductListReducer.reduce(viewModel.store),
+            viewModel.store.stateFlow.map { it.productFilterInfo }
+        ) { uiProducts, productFilterInfo ->
+            if(uiProducts.isEmpty()) {
                 return@combine ProductListFragmentUiState.Loading
-            }
-
-            val uiProducts = listOfProduct.map {
-                UiProduct(
-                    product = it,
-                    isFavorite = setOfFavoriteIds.contains(it.id),
-                    isExpanded = setOfExpandedIds.contains(it.id)
-                )
             }
 
             val uiFilters = productFilterInfo.filters.map { filter ->

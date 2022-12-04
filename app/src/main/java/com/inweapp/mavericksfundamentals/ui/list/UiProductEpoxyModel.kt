@@ -19,6 +19,7 @@ data class UiProductEpoxyModel(
     val uiProduct: UiProduct?,
     val onFavoriteIconClicked: (Int) -> Unit,
     val onUiProductClicked: (Int) -> Unit,
+    val onAddToCartClicked: (Int) -> Unit
 ): ViewBindingKotlinModel<EpoxyModelProductItemBinding>(R.layout.epoxy_model_product_item) {
     @SuppressLint("SetTextI18n")
     override fun EpoxyModelProductItemBinding.bind() {
@@ -33,6 +34,7 @@ data class UiProductEpoxyModel(
             productPriceTextView.text = uiProduct.product.price.toString()
             productDescriptionTextView.text = uiProduct.product.description
             productDescriptionTextView.isVisible = uiProduct.isExpanded
+            inCartView.isVisible = uiProduct.isInCart
 
             val imageRes = if(uiProduct.isFavorite) {
                 R.drawable.ic_baseline_favorite_24
@@ -46,6 +48,8 @@ data class UiProductEpoxyModel(
             root.setOnClickListener {
                 onUiProductClicked(uiProduct.product.id)
             }
+
+            addToCartButton.setOnClickListener { onAddToCartClicked(uiProduct.product.id) }
 
             productImageViewLoadingProgressBar.isVisible = true
             productImageView.load(data = uiProduct.product.image) {
